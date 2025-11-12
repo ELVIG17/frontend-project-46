@@ -4,11 +4,14 @@ const stringify = (value) => {
   if (_.isPlainObject(value)) {
     return '[complex value]';
   }
+
   if (typeof value === 'string') {
     return `'${value}'`;
   }
+
   return String(value);
 };
+
 const buildPath = (currentPath, key) => (currentPath ? `${currentPath}.${key}` : key);
 
 const formatDiff = (diff, currentPath = '') => {
@@ -31,6 +34,7 @@ const formatDiff = (diff, currentPath = '') => {
         return [];
     }
   });
+
   return lines.filter((line) => line !== '').join('\n');
 };
 
