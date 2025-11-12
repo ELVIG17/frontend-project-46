@@ -5,13 +5,12 @@ import json from './json.js';
 const formatters = {
   stylish,
   plain,
-  json,
+  json, 
 };
 export default (format) => {
   const formatter = formatters[format];
   if (!formatter) {
-    throw new Error(`Unknown format: ${format}`);
-
+    throw new Error(`Unknown format: ${format}`); 
   }
   return formatter;
 };
