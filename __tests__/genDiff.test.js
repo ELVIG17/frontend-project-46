@@ -75,10 +75,8 @@ describe('genDiff', () => {
     test('should compare nested YAML files correctly in json format', () => {
       const filepath1 = getFixturePath('nested1.yaml');
       const filepath2 = getFixturePath('nested2.yaml');
-      
       const result = genDiff(filepath1, filepath2, 'json');
       expect(() => JSON.parse(result)).not.toThrow();
-      
       const parsedResult = JSON.parse(result);
       expect(Array.isArray(parsedResult)).toBe(true);
     });

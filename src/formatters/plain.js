@@ -1,24 +1,22 @@
 import _ from 'lodash';
 
 const stringify = (value) => {
+
   if (_.isPlainObject(value)) {
     return '[complex value]';
   }
-  
   if (typeof value === 'string') {
     return `'${value}'`;
   }
-  
   return String(value);
 };
-
 const buildPath = (currentPath, key) => (currentPath ? `${currentPath}.${key}` : key);
 
 const formatDiff = (diff, currentPath = '') => {
-  const lines = diff.flatMap((node) => {
+  const lines = diff.flatMap((node) => { 
     const { key, type } = node;
     const propertyPath = buildPath(currentPath, key);
-    
+
     switch (type) {
       case 'added':
         return `Property '${propertyPath}' was added with value: ${stringify(node.value)}`;
