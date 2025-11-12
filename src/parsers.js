@@ -4,7 +4,6 @@ import yaml from 'js-yaml';
 
 const getFileContent = (filepath) => {
   const absolutePath = path.resolve(process.cwd(), filepath);
-  
   // Проверяем существование файла
   if (!fs.existsSync(absolutePath)) {
     throw new Error(`File not found: ${filepath}`);

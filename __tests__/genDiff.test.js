@@ -102,11 +102,9 @@ describe('genDiff', () => {
     // Создадим временные файлы с неподдерживаемым форматом для теста
     const filepath1 = getFixturePath('file1.json'); // используем существующий файл
     const filepath2 = getFixturePath('file1.json'); // используем существующий файл
-    
     // Меняем расширение в пути для теста
     const fakeTxtPath1 = filepath1.replace('.json', '.txt');
     const fakeTxtPath2 = filepath2.replace('.json', '.txt');
-    
     expect(() => {
       // Передаем пути с .txt расширением, но файлы существуют
       genDiff(fakeTxtPath1, fakeTxtPath2);
