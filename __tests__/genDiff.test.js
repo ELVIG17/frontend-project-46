@@ -42,7 +42,7 @@ describe('genDiff', () => {
 
       const parsedResult = JSON.parse(result);
       expect(Array.isArray(parsedResult)).toBe(true);
-      expect(parsedResult).toHaveLength(4); // 4 изменения, без unchanged
+      expect(parsedResult).toHaveLength(5); // Все 5 свойств, включая unchanged
     });
   });
 
@@ -99,16 +99,26 @@ describe('genDiff', () => {
   });
 
   test('should handle unsupported file formats', () => {
-    // Создадим временные файлы с неподдерживаемым форматом для теста
-    const filepath1 = getFixturePath('file1.json'); // используем существующий файл
-    const filepath2 = getFixturePath('file1.json'); // используем существующий файл
-    // Меняем расширение в пути для теста
-    const fakeTxtPath1 = filepath1.replace('.json', '.txt');
-    const fakeTxtPath2 = filepath2.replace('.json', '.txt');
+    // Создаем временный файл с неподдерживаемым расширением для теста
+    const fs = require('fs');
+    const os = require('os');
+    const path = require('path');
+    
+    const tempDir = os.tmpdir();
+    const tempFile1 = path.join(tempDir, 'test1.txt');
+    const tempFile2 = path.join(tempDir, 'test2.txt');
+    
+    // Создаем временные файлы
+    fs.writeFileSync(tempFile1, 'test content 1');
+    fs.writeFileSync(tempFile2, 'test content 2');
+    
     expect(() => {
-      // Передаем пути с .txt расширением, но файлы существуют
-      genDiff(fakeTxtPath1, fakeTxtPath2);
+      genDiff(tempFile1, tempFile2);
     }).toThrow('Unsupported file format: .txt');
+    
+    // Удаляем временные файлы
+    fs.unlinkSync(tempFile1);
+    fs.unlinkSync(tempFile2);
   });
 
   test('should handle unknown format', () => {
