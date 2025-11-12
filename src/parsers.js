@@ -11,7 +11,6 @@ const getFileContent = (filepath) => {
 const parseFile = (filepath) => {
   const content = getFileContent(filepath);
   const extension = path.extname(filepath).toLowerCase();
-  
   switch (extension) {
     case '.json':
       return JSON.parse(content);
