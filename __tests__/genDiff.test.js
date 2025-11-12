@@ -1,6 +1,7 @@
-import { readFileSync } from 'fs';
+import { readFileSync, writeFileSync, unlinkSync } from 'fs';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import os from 'os';
 import genDiff from '../src/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -100,25 +101,21 @@ describe('genDiff', () => {
 
   test('should handle unsupported file formats', () => {
     // Создаем временный файл с неподдерживаемым расширением для теста
-    const fs = require('fs');
-    const os = require('os');
-    const path = require('path');
-    
     const tempDir = os.tmpdir();
     const tempFile1 = path.join(tempDir, 'test1.txt');
     const tempFile2 = path.join(tempDir, 'test2.txt');
-    
+
     // Создаем временные файлы
-    fs.writeFileSync(tempFile1, 'test content 1');
-    fs.writeFileSync(tempFile2, 'test content 2');
-    
+    writeFileSync(tempFile1, 'test content 1');
+    writeFileSync(tempFile2, 'test content 2');
+
     expect(() => {
       genDiff(tempFile1, tempFile2);
     }).toThrow('Unsupported file format: .txt');
-    
+
     // Удаляем временные файлы
-    fs.unlinkSync(tempFile1);
-    fs.unlinkSync(tempFile2);
+    unlinkSync(tempFile1);
+    unlinkSync(tempFile2);
   });
 
   test('should handle unknown format', () => {
