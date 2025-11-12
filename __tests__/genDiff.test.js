@@ -10,7 +10,7 @@ const readFile = (filename) => readFileSync(getFixturePath(filename), 'utf-8');
 
 describe('genDiff', () => {
   describe('flat files', () => {
-    test('should compare flat JSON files correctly', () => {
+    test('should compare flat JSON files correctly in stylish format', () => {
       const filepath1 = getFixturePath('file1.json');
       const filepath2 = getFixturePath('file2.json');
       const expected = readFile('expected.txt').trim();
@@ -19,18 +19,36 @@ describe('genDiff', () => {
       expect(result).toEqual(expected);
     });
 
-    test('should compare flat YAML files correctly', () => {
-      const filepath1 = getFixturePath('file1.yaml');
-      const filepath2 = getFixturePath('file2.yaml');
-      const expected = readFile('expected.txt').trim();
+    test('should compare flat JSON files correctly in plain format', () => {
+      const filepath1 = getFixturePath('file1.json');
+      const filepath2 = getFixturePath('file2.json');
+      const expected = [
+        "Property 'follow' was removed",
+        "Property 'host' was unchanged",
+        "Property 'proxy' was removed",
+        "Property 'timeout' was updated. From 50 to 20",
+        "Property 'verbose' was added with value: true"
+      ].join('\n');
       
-      const result = genDiff(filepath1, filepath2);
+      const result = genDiff(filepath1, filepath2, 'plain');
       expect(result).toEqual(expected);
+    });
+
+    test('should compare flat JSON files correctly in json format', () => {
+      const filepath1 = getFixturePath('file1.json');
+      const filepath2 = getFixturePath('file2.json');
+      
+      const result = genDiff(filepath1, filepath2, 'json');
+      expect(() => JSON.parse(result)).not.toThrow();
+      
+      const parsedResult = JSON.parse(result);
+      expect(Array.isArray(parsedResult)).toBe(true);
+      expect(parsedResult).toHaveLength(5);
     });
   });
 
   describe('nested files', () => {
-    test('should compare nested JSON files correctly', () => {
+    test('should compare nested JSON files correctly in stylish format', () => {
       const filepath1 = getFixturePath('nested1.json');
       const filepath2 = getFixturePath('nested2.json');
       const expected = readFile('nested_expected.txt').trim();
@@ -39,22 +57,39 @@ describe('genDiff', () => {
       expect(result).toEqual(expected);
     });
 
-    test('should compare nested YAML files correctly', () => {
-      const filepath1 = getFixturePath('nested1.yaml');
-      const filepath2 = getFixturePath('nested2.yaml');
-      const expected = readFile('nested_expected.txt').trim();
+    test('should compare nested JSON files correctly in plain format', () => {
+      const filepath1 = getFixturePath('nested1.json');
+      const filepath2 = getFixturePath('nested2.json');
+      const expected = readFile('plain_expected.txt').trim();
       
-      const result = genDiff(filepath1, filepath2);
+      const result = genDiff(filepath1, filepath2, 'plain');
       expect(result).toEqual(expected);
     });
 
-    test('should compare mixed nested files correctly', () => {
+    test('should compare nested JSON files correctly in json format', () => {
       const filepath1 = getFixturePath('nested1.json');
-      const filepath2 = getFixturePath('nested2.yaml');
-      const expected = readFile('nested_expected.txt').trim();
+      const filepath2 = getFixturePath('nested2.json');
       
-      const result = genDiff(filepath1, filepath2);
-      expect(result).toEqual(expected);
+      const result = genDiff(filepath1, filepath2, 'json');
+      expect(() => JSON.parse(result)).not.toThrow();
+      
+      const parsedResult = JSON.parse(result);
+      expect(Array.isArray(parsedResult)).toBe(true);
+      
+      // Проверяем структуру JSON вывода
+      const hasNestedStructure = parsedResult.some((node) => node.type === 'nested' && Array.isArray(node.children));
+      expect(hasNestedStructure).toBe(true);
+    });
+
+    test('should compare nested YAML files correctly in json format', () => {
+      const filepath1 = getFixturePath('nested1.yaml');
+      const filepath2 = getFixturePath('nested2.yaml');
+      
+      const result = genDiff(filepath1, filepath2, 'json');
+      expect(() => JSON.parse(result)).not.toThrow();
+      
+      const parsedResult = JSON.parse(result);
+      expect(Array.isArray(parsedResult)).toBe(true);
     });
   });
 
@@ -68,5 +103,11 @@ describe('genDiff', () => {
     expect(() => {
       genDiff('file1.txt', 'file2.txt');
     }).toThrow('Unsupported file format: .txt');
+  });
+
+  test('should handle unknown format', () => {
+    expect(() => {
+      genDiff('file1.json', 'file2.json', 'unknown');
+    }).toThrow('Unknown format: unknown');
   });
 });

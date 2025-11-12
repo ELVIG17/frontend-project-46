@@ -2,6 +2,9 @@ import _ from 'lodash';
 
 const stringify = (value, depth) => {
   if (!_.isPlainObject(value)) {
+    if (value === null) {
+      return 'null';
+    }
     return String(value);
   }
 
