@@ -10,10 +10,7 @@ test:
 test-coverage:
 	npm run test:coverage
 
-test-watch:
-	npm run test:watch
+ci:
+	npm run ci
 
-publish:
-	npm publish
-
-.PHONY: test
+.PHONY: test lint

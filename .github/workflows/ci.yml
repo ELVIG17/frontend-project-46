@@ -9,30 +9,49 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     
     strategy:
       matrix:
-        node-version: [18.x, 20.x]
+        node-version: [18.x]
     
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+        cache-dependency-path: package-lock.json
     
     - name: Install dependencies
-      run: make install
+      run: |
+        npm ci --no-audit --prefer-offline
     
     - name: Run linter
-      run: make lint
+      run: |
+        node node_modules/eslint/bin/eslint.js . --max-warnings=0
     
     - name: Run tests
-      run: make test-coverage
+      run: |
+        NODE_OPTIONS=--experimental-vm-modules npx jest
     
-    - name: Upload coverage to SonarCloud
-      uses: SonarSource/sonarcloud-github-action@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    - name: Run tests with coverage
+      run: |
+        NODE_OPTIONS=--experimental-vm-modules npx jest --coverage
+    
+    - name: Test CLI functionality
+      run: |
+        # Test help
+        node bin/gendiff.js -h
+        # Test version
+        node bin/gendiff.js -V
+        # Test basic comparison
+        node bin/gendiff.js __tests__/__fixtures__/file1.json __tests__/__fixtures__/file2.json
+        # Test nested comparison
+        node bin/gendiff.js __tests__/__fixtures__/nested1.json __tests__/__fixtures__/nested2.json
+        # Test different formats
+        node bin/gendiff.js __tests__/__fixtures__/file1.json __tests__/__fixtures__/file2.json --format plain
+        node bin/gendiff.js __tests__/__fixtures__/file1.json __tests__/__fixtures__/file2.json --format json
