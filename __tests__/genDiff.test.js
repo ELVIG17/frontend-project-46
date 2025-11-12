@@ -22,6 +22,7 @@ describe('genDiff', () => {
       const filepath1 = getFixturePath('file1.json');
       const filepath2 = getFixturePath('file2.json');
       const expected = [
+        
         "Property 'follow' was removed",
         "Property 'host' was unchanged",
         "Property 'proxy' was removed",

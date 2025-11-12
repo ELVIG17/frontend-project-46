@@ -23,9 +23,7 @@ const buildDiff = (obj1, obj2) => {
         value: value1,
         type: 'removed',
       };
-      
     }
-
     if (_.isPlainObject(value1) && _.isPlainObject(value2)) {
       return {
         key,

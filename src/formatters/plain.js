@@ -1,7 +1,6 @@
 import _ from 'lodash';
 
 const stringify = (value) => {
-
   if (_.isPlainObject(value)) {
     return '[complex value]';
   }
@@ -13,7 +12,7 @@ const stringify = (value) => {
 const buildPath = (currentPath, key) => (currentPath ? `${currentPath}.${key}` : key);
 
 const formatDiff = (diff, currentPath = '') => {
-  const lines = diff.flatMap((node) => { 
+  const lines = diff.flatMap((node) => {
     const { key, type } = node;
     const propertyPath = buildPath(currentPath, key);
 
@@ -32,7 +31,6 @@ const formatDiff = (diff, currentPath = '') => {
         return [];
     }
   });
-  
   return lines.filter((line) => line !== '').join('\n');
 };
 
