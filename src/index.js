@@ -1,7 +1,12 @@
+import { parseFile } from './parsers.js';
+
 const genDiff = (filepath1, filepath2, format = 'stylish') => {
-  // Здесь будет реализация сравнения файлов
-  // Пока возвращаем заглушку для демонстрации
-  return `Comparing ${filepath1} and ${filepath2}${format ? ` with format: ${format}` : ''}`;
+  const data1 = parseFile(filepath1);
+  const data2 = parseFile(filepath2);
+  
+  // Временная заглушка - просто выводим оба объекта
+  // На следующих шагах здесь будет реализовано сравнение
+  return `File 1: ${JSON.stringify(data1)}\nFile 2: ${JSON.stringify(data2)}\nFormat: ${format}`;
 };
 
 export default genDiff;
