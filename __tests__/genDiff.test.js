@@ -14,7 +14,6 @@ describe('genDiff', () => {
       const filepath1 = getFixturePath('file1.json');
       const filepath2 = getFixturePath('file2.json');
       const expected = readFile('expected.txt').trim();
-      
       const result = genDiff(filepath1, filepath2);
       expect(result).toEqual(expected);
     });
@@ -27,9 +26,8 @@ describe('genDiff', () => {
         "Property 'host' was unchanged",
         "Property 'proxy' was removed",
         "Property 'timeout' was updated. From 50 to 20",
-        "Property 'verbose' was added with value: true"
+        "Property 'verbose' was added with value: true",
       ].join('\n');
-      
       const result = genDiff(filepath1, filepath2, 'plain');
       expect(result).toEqual(expected);
     });
@@ -37,10 +35,8 @@ describe('genDiff', () => {
     test('should compare flat JSON files correctly in json format', () => {
       const filepath1 = getFixturePath('file1.json');
       const filepath2 = getFixturePath('file2.json');
-      
       const result = genDiff(filepath1, filepath2, 'json');
       expect(() => JSON.parse(result)).not.toThrow();
-      
       const parsedResult = JSON.parse(result);
       expect(Array.isArray(parsedResult)).toBe(true);
       expect(parsedResult).toHaveLength(5);
@@ -52,7 +48,6 @@ describe('genDiff', () => {
       const filepath1 = getFixturePath('nested1.json');
       const filepath2 = getFixturePath('nested2.json');
       const expected = readFile('nested_expected.txt').trim();
-      
       const result = genDiff(filepath1, filepath2);
       expect(result).toEqual(expected);
     });
@@ -61,7 +56,6 @@ describe('genDiff', () => {
       const filepath1 = getFixturePath('nested1.json');
       const filepath2 = getFixturePath('nested2.json');
       const expected = readFile('plain_expected.txt').trim();
-      
       const result = genDiff(filepath1, filepath2, 'plain');
       expect(result).toEqual(expected);
     });
@@ -69,13 +63,10 @@ describe('genDiff', () => {
     test('should compare nested JSON files correctly in json format', () => {
       const filepath1 = getFixturePath('nested1.json');
       const filepath2 = getFixturePath('nested2.json');
-      
       const result = genDiff(filepath1, filepath2, 'json');
       expect(() => JSON.parse(result)).not.toThrow();
-      
       const parsedResult = JSON.parse(result);
       expect(Array.isArray(parsedResult)).toBe(true);
-      
       // Проверяем структуру JSON вывода
       const hasNestedStructure = parsedResult.some((node) => node.type === 'nested' && Array.isArray(node.children));
       expect(hasNestedStructure).toBe(true);
