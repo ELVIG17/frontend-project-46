@@ -1,37 +1,50 @@
 import _ from 'lodash';
 
-const formatValue = (value) => {
-  if (_.isObject(value)) {
-    return '[complex value]';
+const stringify = (value, depth) => {
+  if (!_.isPlainObject(value)) {
+    return String(value);
   }
-  
-  if (typeof value === 'string') {
-    return value;
-  }
-  
-  return String(value);
+
+  const indentSize = depth * 4;
+  const currentIndent = ' '.repeat(indentSize);
+  const bracketIndent = ' '.repeat(indentSize - 4);
+
+  const lines = Object.entries(value).map(([key, val]) => {
+    const formattedValue = stringify(val, depth + 1);
+    return `${currentIndent}${key}: ${formattedValue}`;
+  });
+
+  return ['{', ...lines, `${bracketIndent}}`].join('\n');
 };
 
-const formatDiff = (diff) => {
-  const lines = diff.map((item) => {
-    switch (item.type) {
+const formatDiff = (diff, depth = 1) => {
+  const indentSize = depth * 4;
+  const indent = ' '.repeat(indentSize - 2);
+  const bracketIndent = ' '.repeat(indentSize - 4);
+
+  const lines = diff.map((node) => {
+    const { key, type } = node;
+
+    switch (type) {
       case 'added':
-        return `  + ${item.key}: ${formatValue(item.value)}`;
+        return `${indent}+ ${key}: ${stringify(node.value, depth + 1)}`;
       case 'removed':
-        return `  - ${item.key}: ${formatValue(item.value)}`;
+        return `${indent}- ${key}: ${stringify(node.value, depth + 1)}`;
       case 'unchanged':
-        return `    ${item.key}: ${formatValue(item.value)}`;
+        return `${indent}  ${key}: ${stringify(node.value, depth + 1)}`;
       case 'changed':
         return [
-          `  - ${item.key}: ${formatValue(item.oldValue)}`,
-          `  + ${item.key}: ${formatValue(item.newValue)}`
+          `${indent}- ${key}: ${stringify(node.oldValue, depth + 1)}`,
+          `${indent}+ ${key}: ${stringify(node.newValue, depth + 1)}`,
         ].join('\n');
+      case 'nested':
+        return `${indent}  ${key}: ${formatDiff(node.children, depth + 1)}`;
       default:
         return '';
     }
   });
-  
-  return `{\n${lines.join('\n')}\n}`;
+
+  return ['{', ...lines, `${bracketIndent}}`].join('\n');
 };
 
 export default formatDiff;
