@@ -8,11 +8,11 @@
     "gendiff": "bin/gendiff.js"
   },
   "scripts": {
-    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest",
-    "test:watch": "NODE_OPTIONS=--experimental-vm-modules npx jest --watch",
-    "test:coverage": "NODE_OPTIONS=--experimental-vm-modules npx jest --coverage",
-    "lint": "npx eslint .",
-    "lint:fix": "npx eslint . --fix",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+    "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watch",
+    "test:coverage": "NODE_OPTIONS=--experimental-vm-modules jest --coverage",
+    "lint": "node node_modules/eslint/bin/eslint.js .",
+    "lint:fix": "node node_modules/eslint/bin/eslint.js . --fix",
     "install-deps": "npm install",
     "ci": "npm run lint && npm run test:coverage"
   },
